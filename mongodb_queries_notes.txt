@@ -1,0 +1,175 @@
+MONGODB QUERIES WITH SIMPLE COMMENTS
+
+Show all databases available in MongoDB
+
+show dbs
+
+Create or switch to a database named ecommerce
+
+use ecommerce
+
+Show all collections inside the current database
+
+show collections
+
+Delete the current database
+
+db.dropDatabase()
+
+CREATING COLLECTION
+
+Create a new collection called contacts
+
+db.createCollection(“contacts”)
+
+INSERTING DATA
+
+Insert one document into contacts collection
+
+db.contacts.insertOne({ name: “Alice”, message: “Loved your website!”,
+phone: “9876543210”, createdAt: new Date() })
+
+Insert multiple documents
+
+db.contacts.insertMany([ { name: “Alice”, phone: “1111111111” }, { name:
+“Bob”, phone: “2222222222” }])
+
+READING DATA
+
+Display all documents
+
+db.contacts.find()
+
+Display documents in readable format
+
+db.contacts.find().pretty()
+
+Find document where name is Alice
+
+db.contacts.find({ name: “Alice” })
+
+COMPARISON OPERATORS
+
+Find documents where price is greater than 100
+
+db.sales.find({ price: { $gt: 100 } })
+
+Find documents where price is less than or equal to 500
+
+db.sales.find({ price: { $lte: 500 } })
+
+Operators:
+
+$gt -> greater than
+
+$lt -> less than
+
+$gte -> greater than or equal
+
+$lte -> less than or equal
+
+$ne -> not equal
+
+LOGICAL OPERATORS
+
+Find documents where price >100 AND quantity <5
+
+db.sales.find({ $and: [ { price: { $gt: 100 } }, { quantity: { $lt: 5 }
+} ] })
+
+Find documents where status is pending OR shipped
+
+db.sales.find({ $or: [ { status: “pending” }, { status: “shipped” } ] })
+
+PROJECTION
+
+Show only name and phone fields
+
+db.contacts.find({}, { name: 1, phone: 1 })
+
+SORTING
+
+Sort documents by price ascending
+
+db.sales.find().sort({ price: 1 })
+
+Sort documents by price descending
+
+db.sales.find().sort({ price: -1 })
+
+LIMIT
+
+Display only first 5 documents
+
+db.sales.find().limit(5)
+
+UPDATING DATA
+
+Update phone number of Alice
+
+db.contacts.updateOne( { name: “Alice” }, { $set: { phone: “9999999999”
+} } )
+
+Update status for multiple documents
+
+db.contacts.updateMany( { status: “pending” }, { $set: { status:
+“completed” } } )
+
+Add a new item into an array field
+
+db.orders.updateOne( { _id: 1 }, { $push: { items: “Keyboard” } } )
+
+DELETING DATA
+
+Delete one document
+
+db.contacts.deleteOne({ name: “Alice” })
+
+Delete multiple documents
+
+db.contacts.deleteMany({ status: “inactive” })
+
+INDEXING
+
+Create an index on name field
+
+db.contacts.createIndex({ name: 1 })
+
+View all indexes
+
+db.contacts.getIndexes()
+
+Show query performance
+
+db.contacts.find({ name: “Alice” }).explain(“executionStats”)
+
+AGGREGATION PIPELINE
+
+Filter documents where category is Electronics
+
+db.sales.aggregate([ { $match: { category: “Electronics” } }])
+
+Show only product and price fields
+
+db.sales.aggregate([ { $project: { product: 1, price: 1 } }])
+
+Group by category and calculate total price
+
+db.sales.aggregate([ { $group: {
+      _id: "$category”, total: { $sum: "$price” } } }])
+
+Sort aggregated results
+
+db.sales.aggregate([ { $sort: { price: -1 } }])
+
+Match completed orders and group revenue by category
+
+db.sales.aggregate([ { $match: { status: “completed” } }, { $group: {
+      _id: "$category”, totalRevenue: { $sum: "$price” } } }])
+
+TOTAL REVENUE QUERY
+
+Calculate total revenue from all sales
+
+db.sales.aggregate([ { $group: { _id: null, totalRevenue: {
+$sum: "$price” } } }])

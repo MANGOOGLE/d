@@ -1,0 +1,247 @@
+==============================
+MONGODB QUERIES WITH COMMENTS
+==============================
+
+
+BASIC DATABASE COMMANDS
+-----------------------
+
+show dbs
+# Shows all databases available in MongoDB
+
+use ecommerce
+# Creates or switches to a database called ecommerce
+
+show collections
+# Shows all collections in the current database
+
+db.dropDatabase()
+# Deletes the current database completely
+
+
+
+CREATING A COLLECTION
+---------------------
+
+db.createCollection("contacts")
+# Creates a new collection named contacts
+
+
+
+INSERTING DATA
+--------------
+
+db.contacts.insertOne({
+   name: "Alice",
+   message: "Loved your website!",
+   phone: "9876543210",
+   createdAt: new Date()
+})
+# Inserts one document (record) into the contacts collection
+
+
+db.contacts.insertMany([
+  { name: "Alice", phone: "1111111111" },
+  { name: "Bob", phone: "2222222222" }
+])
+# Inserts multiple documents into the collection
+
+
+
+READING DATA
+------------
+
+db.contacts.find()
+# Displays all documents in the contacts collection
+
+
+db.contacts.find().pretty()
+# Displays documents in a clean readable format
+
+
+db.contacts.find({ name: "Alice" })
+# Finds documents where the name is Alice
+
+
+
+COMPARISON OPERATORS
+--------------------
+
+db.sales.find({ price: { $gt: 100 } })
+# Finds documents where price is greater than 100
+
+
+db.sales.find({ price: { $lte: 500 } })
+# Finds documents where price is less than or equal to 500
+
+
+Common operators used:
+
+$gt   → greater than
+$lt   → less than
+$gte  → greater than or equal to
+$lte  → less than or equal to
+$ne   → not equal
+
+
+
+LOGICAL OPERATORS
+-----------------
+
+db.sales.find({
+  $and: [
+    { price: { $gt: 100 } },
+    { quantity: { $lt: 5 } }
+  ]
+})
+# Finds documents where price > 100 AND quantity < 5
+
+
+db.sales.find({
+  $or: [
+    { status: "pending" },
+    { status: "shipped" }
+  ]
+})
+# Finds documents where status is pending OR shipped
+
+
+
+PROJECTION (SELECTING FIELDS)
+-----------------------------
+
+db.contacts.find({}, { name: 1, phone: 1 })
+# Displays only name and phone fields
+
+
+
+SORTING DATA
+------------
+
+db.sales.find().sort({ price: 1 })
+# Sorts documents by price in ascending order
+
+
+db.sales.find().sort({ price: -1 })
+# Sorts documents by price in descending order
+
+
+
+LIMITING RESULTS
+----------------
+
+db.sales.find().limit(5)
+# Displays only the first 5 documents
+
+
+
+UPDATING DATA
+-------------
+
+db.contacts.updateOne(
+  { name: "Alice" },
+  { $set: { phone: "9999999999" } }
+)
+# Updates the phone number of Alice
+
+
+db.contacts.updateMany(
+  { status: "pending" },
+  { $set: { status: "completed" } }
+)
+# Updates multiple documents where status is pending
+
+
+db.orders.updateOne(
+  { _id: 1 },
+  { $push: { items: "Keyboard" } }
+)
+# Adds a new item into an array field
+
+
+
+DELETING DATA
+-------------
+
+db.contacts.deleteOne({ name: "Alice" })
+# Deletes one document where name is Alice
+
+
+db.contacts.deleteMany({ status: "inactive" })
+# Deletes multiple documents where status is inactive
+
+
+
+INDEXING (FOR PERFORMANCE)
+--------------------------
+
+db.contacts.createIndex({ name: 1 })
+# Creates an index on the name field to make searching faster
+
+
+db.contacts.getIndexes()
+# Shows all indexes created in the collection
+
+
+db.contacts.find({ name: "Alice" }).explain("executionStats")
+# Shows how MongoDB executes the query and its performance
+
+
+
+AGGREGATION PIPELINE
+--------------------
+
+db.sales.aggregate([
+  { $match: { category: "Electronics" } }
+])
+# Filters documents where category is Electronics
+
+
+db.sales.aggregate([
+  { $project: { product: 1, price: 1 } }
+])
+# Displays only product and price fields
+
+
+db.sales.aggregate([
+  {
+    $group: {
+      _id: "$category",
+      total: { $sum: "$price" }
+    }
+  }
+])
+# Groups documents by category and calculates total price
+
+
+db.sales.aggregate([
+  { $sort: { price: -1 } }
+])
+# Sorts aggregated results in descending order
+
+
+db.sales.aggregate([
+  { $match: { status: "completed" } },
+  {
+    $group: {
+      _id: "$category",
+      totalRevenue: { $sum: "$price" }
+    }
+  }
+])
+# Filters completed orders and calculates revenue by category
+
+
+
+TOTAL REVENUE QUERY
+-------------------
+
+db.sales.aggregate([
+  {
+    $group: {
+      _id: null,
+      totalRevenue: { $sum: "$price" }
+    }
+  }
+])
+# Calculates total revenue from all sales
