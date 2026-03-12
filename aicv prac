@@ -1,0 +1,100 @@
+winget install MongoDB.Server
+
+Net start MongoDB 
+
+
+// Example: Insert ONE restaurant document
+db.restaurant.insertOne({
+restaurant_id: 10,
+name: "Sample Cafe",
+borough: "Queens",
+cuisine: "Cafe",
+zipcode: 11101,
+latitude: 40.75,
+score: 70
+})
+
+// Example: Insert MANY restaurant documents
+db.restaurant.insertMany([
+{
+restaurant_id: 1,
+name: "Pizza Palace",
+borough: "Manhattan",
+cuisine: "Pizza",
+zipcode: 10001,
+latitude: 40.76,
+score: 85
+},
+{
+restaurant_id: 2,
+name: "Bronx Burger",
+borough: "Bronx",
+cuisine: "Burger",
+zipcode: 10451,
+latitude: 40.82,
+score: 95
+},
+{
+restaurant_id: 3,
+name: "Bronx Taco",
+borough: "Bronx",
+cuisine: "Mexican",
+zipcode: 10462,
+latitude: 40.83,
+score: 12
+},
+{
+restaurant_id: 4,
+name: "Brooklyn Sushi",
+borough: "Brooklyn",
+cuisine: "Japanese",
+zipcode: 11201,
+latitude: 40.69,
+score: 90
+},
+{
+restaurant_id: 5,
+name: "Bronx Pizza",
+borough: "Bronx",
+cuisine: "Pizza",
+zipcode: 10471,
+latitude: 40.91,
+score: 105
+}
+])
+
+// Practical 1: Display all documents in the restaurant collection
+db.restaurant.find()
+
+// Practical 2: Display restaurant_id, name, borough, and cuisine
+db.restaurant.find({}, {restaurant_id:1, name:1, borough:1, cuisine:1})
+
+// Practical 3: Display restaurant_id, name, borough, cuisine excluding _id
+db.restaurant.find({}, {restaurant_id:1, name:1, borough:1, cuisine:1, _id:0})
+
+// Practical 4: Display restaurant_id, name, borough, zipcode excluding _id
+db.restaurant.find({}, {restaurant_id:1, name:1, borough:1, zipcode:1, _id:0})
+
+// Practical 5: Display restaurants located in Bronx
+db.restaurant.find({borough:"Bronx"})
+
+// Practical 6: Display first 5 restaurants in Bronx
+db.restaurant.find({borough:"Bronx"}).limit(5)
+
+// Practical 7: Display next 5 restaurants after skipping first 5 in Bronx
+db.restaurant.find({borough:"Bronx"}).skip(5).limit(5)
+
+// Practical 8: Find restaurants with score greater than 9
+db.restaurant.find({score:{$gt:9}})
+
+// Practical 9: Find restaurants with score greater than 80 and less than 100
+db.restaurant.find({score:{$gt:80,$lt:100}})
+
+// Practical 10: Find restaurants with latitude less than -95.75416833
+db.restaurant.find({latitude:{$lt:-95.75416833}})
+
+// Update example: Change score of restaurant with restaurant_id = 2
+db.restaurant.updateOne(
+{restaurant_id:2},
+{$set:{score:-100}}
+)
